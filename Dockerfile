@@ -15,14 +15,7 @@ RUN \
         curl=7.61.1-r1 \
     && \
     cp /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime && \
-    rm -rf /var/cache/apk/*
-
-# hadolint ignore=DL3003
-RUN \
+    rm -rf /var/cache/apk/* && \
+    curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b "$(go env GOPATH)/bin" "v${GOLANGCI}" && \
     go version && \
-    go get -u -v github.com/golangci/golangci-lint/cmd/golangci-lint && \
-    cd /go/src/github.com/golangci/golangci-lint && \
-    git checkout v${GOLANGCI} && \
-    cd /go/src/github.com/golangci/golangci-lint/cmd/golangci-lint && \
-    go install -ldflags "-X 'main.version=$(git describe --tags)' -X 'main.commit=$(git rev-parse --short HEAD)' -X 'main.date=$(date)'" && \
     golangci-lint --version
